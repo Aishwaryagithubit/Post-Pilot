@@ -10,11 +10,71 @@
   <div class="container">
     <h1>✨ AI Post Generator</h1>
     <textarea id="userInput" placeholder="Write your idea for the post..."></textarea>
-    <button onclick="generatePost()">Generate 🔥</button>
+    <button id="generateBtn">Generate 🔥</button>
     <div class="loading" id="loading">⏳ Generating with AI...</div>
     <div class="output" id="output"></div>
   </div>
 
-  <script src="script.js"></script>
+  <!-- <script src="script.js"></script> -->
+
+
+  <script type="module">
+  import {
+    GoogleGenerativeAI,
+    HarmCategory,
+    HarmBlockThreshold,
+  } from "https://cdn.jsdelivr.net/npm/@google/generative-ai@latest/+esm";
+
+  const API_KEY = "AIzaSyBQyHsAsXAjHITGh5-WEnpHXRTx0UinBSs"; 
+  const genAI = new GoogleGenerativeAI(API_KEY);
+
+
+  async function typeWriter(text, element, delay = 40) {
+    element.innerHTML = "";
+    for (let i = 0; i < text.length; i++) {
+      element.innerHTML += text[i];
+      await new Promise((resolve) => setTimeout(resolve, delay));
+    }
+  }
+  
+
+  async function generatePost() {
+    const input = document.getElementById("userInput").value.trim();
+    const output = document.getElementById("output");
+
+    if (!input) {
+      alert("Please enter your post idea.");
+      return;
+    }
+
+    output.innerHTML = "✨ Generating your AI-powered post...";
+
+    try {
+      const model = genAI.getGenerativeModel({
+        model: "gemini-1.5-flash",
+      });
+
+      const prompt = `Create a social media post from this idea: "${input}"
+      Include the following:
+      - Caption
+      - Emojis
+      - Description
+      - Hashtags
+      Format clearly.`;
+
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      const responseText = await response.text();
+
+      await typeWriter(responseText, output);
+    } catch (err) {
+      console.error("Error:", err);
+      output.innerHTML = `❌ Error: ${err.message}`;
+    }
+  }
+
+  document.getElementById("generateBtn")?.addEventListener("click", generatePost);
+</script>
+
 </body>
 </html>
