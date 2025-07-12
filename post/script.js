@@ -1,40 +1,44 @@
-function generateDesign() {
-  const input = document.getElementById("designInput").value.toLowerCase();
+async function generatePost() {
+  const userInput = document.getElementById("userInput").value.trim();
+  const outputDiv = document.getElementById("output");
+  const loading = document.getElementById("loading");
 
-  let layout = "";
-  let font = "";
-  let color = "";
-
-  if (input.includes("sale") || input.includes("product")) {
-    layout = "Instagram Carousel – highlight product features and benefits";
-    font = "Montserrat Bold + Open Sans";
-    color = "Red + White + Charcoal (strong contrast)";
-  } else if (input.includes("festival") || input.includes("diwali")) {
-    layout = "Instagram Story – festive background with CTA swipe up";
-    font = "Playfair Display + Lato";
-    color = "Orange + Deep Purple + Gold";
-  } else if (input.includes("quote") || input.includes("mood")) {
-    layout = "Minimal Poster – centered quote with clean design";
-    font = "Raleway Light + Roboto";
-    color = "Muted beige + Navy Blue + Off-white";
-  } else {
-    layout = "Simple Instagram Post – top image, bottom text";
-    font = "Poppins + Arial";
-    color = "Sky Blue + White + Gray";
+  if (!userInput) {
+    alert("Please enter some text.");
+    return;
   }
 
-  document.getElementById("layoutOutput").textContent = layout;
-  document.getElementById("fontOutput").textContent = font;
-  document.getElementById("colorOutput").textContent = color;
-}
+  outputDiv.innerHTML = '';
+  loading.style.display = 'block';
 
-function copyDesign() {
-  const text = `
-Layout: ${document.getElementById("layoutOutput").textContent}
-Font: ${document.getElementById("fontOutput").textContent}
-Color Palette: ${document.getElementById("colorOutput").textContent}
-  `;
-  navigator.clipboard.writeText(text).then(() => {
-    alert("Copied to clipboard!");
-  });
+  const prompt = `Create a social media post for the idea: "${userInput}". Include:
+- Caption:
+- Emojis:
+- Description:
+- Hashtags:`;
+
+  try {
+    const response = await fetch("https://api.cohere.ai/v1/generate", {
+      method: "POST",
+      headers: {
+        "Authorization": "Bearer your-api-key-here", // Replace this
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "command-r",
+        prompt: prompt,
+        max_tokens: 300,
+        temperature: 0.8
+      })
+    });
+
+    const result = await response.json();
+    const generated = result?.generations?.[0]?.text || "⚠️ No response from AI.";
+
+    outputDiv.innerHTML = `<p>${generated.replace(/\n/g, "<br>")}</p>`;
+  } catch (err) {
+    outputDiv.innerHTML = `<p>❌ Error: ${err.message}</p>`;
+  } finally {
+    loading.style.display = 'none';
+  }
 }
