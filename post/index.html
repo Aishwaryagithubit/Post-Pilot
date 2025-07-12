@@ -10,9 +10,18 @@
   <div class="container">
     <h1>✨ AI Post Generator</h1>
     <textarea id="userInput" placeholder="Write your idea for the post..."></textarea>
+
+    
     <button id="generateBtn">Generate 🔥</button>
     <div class="loading" id="loading">⏳ Generating with AI...</div>
     <div class="output" id="output"></div>
+
+    <button id="clearBtn">Reset</button>
+
+    <button id="themeToggleBtn">Switch to Dark Theme 🌙</button>
+
+    <button id="historyBtn">📜 View History</button>
+    <div class="history" id="history" style="display: none;"></div>
   </div>
 
   <!-- <script src="script.js"></script> -->
@@ -54,26 +63,110 @@
         model: "gemini-1.5-flash",
       });
 
-      const prompt = `Create a social media post from this idea: "${input}"
+      const prompt = `Create two social media post options from this idea: "${input}"
       Include the following:
       - Caption
       - Emojis
       - Description
       - Hashtags
-      Format clearly.`;
+       Label them clearly as "Option 1" and "Option 2". Format clearly.`;
 
       const result = await model.generateContent(prompt);
       const response = await result.response;
       const responseText = await response.text();
 
-      await typeWriter(responseText, output);
+      const cleanHTML = formatResponse(responseText);
+      output.innerHTML = cleanHTML;
+      saveToHistory(cleanHTML);
+
+
     } catch (err) {
       console.error("Error:", err);
       output.innerHTML = `❌ Error: ${err.message}`;
     }
   }
+   function formatResponse(text) {
+  const lines = text.split(/\n+/); // split by new lines
+  let html = "";
+  let insideAlt = false;
+
+  lines.forEach(line => {
+    const trimmed = line.trim();
+
+    if (/^alternative.*post/i.test(trimmed)) {
+      html += `<br><hr><h3>🔁 <strong>Alternative Post:</strong></h3><br>`;
+      insideAlt = true;
+    } else if (/^image:/i.test(trimmed)) {
+      html += `🖼️ <strong>Image:</strong> ${trimmed.replace(/image:/i, "").trim()}<br><br>`;
+    } else if (/^caption:/i.test(trimmed)) {
+      html += `📝 <strong>Caption:</strong> ${trimmed.replace(/caption:/i, "").trim()}<br><br>`;
+    } else if (/^description:/i.test(trimmed)) {
+      html += `📖 <strong>Description:</strong> ${trimmed.replace(/description:/i, "").trim()}<br><br>`;
+    } else if (/^hashtags:/i.test(trimmed)) {
+      html += `🏷️ <strong>Hashtags:</strong> ${trimmed.replace(/hashtags:/i, "").trim()}<br><br>`;
+    } else if (trimmed.length > 0) {
+      html += `${trimmed}<br><br>`; // fallback for untagged lines
+    }
+  });
+
+  return html;
+}
+
+    function saveToHistory(content) {
+  const history = JSON.parse(localStorage.getItem("postHistory")) || [];
+  history.unshift({ content, timestamp: new Date().toLocaleString() });
+  localStorage.setItem("postHistory", JSON.stringify(history.slice(0, 15)));
+}
+
+function showHistory() {
+  const historyContainer = document.getElementById("history");
+  const historyData = JSON.parse(localStorage.getItem("postHistory")) || [];
+
+  if (historyData.length === 0) {
+    historyContainer.innerHTML = "<p>No history yet.</p>";
+  } else {
+    historyContainer.innerHTML = historyData.map(entry => `
+      <div class="history-item">
+        <small>🕓 ${entry.timestamp}</small>
+        <div class="history-content">${entry.content}</div>
+        <hr>
+      </div>
+    `).join("");
+  }
+
+  historyContainer.style.display = historyContainer.style.display === "none" ? "block" : "none";
+}
+
 
   document.getElementById("generateBtn")?.addEventListener("click", generatePost);
+
+  document.getElementById("clearBtn").addEventListener("click", () => {
+  document.getElementById("output").innerHTML = "";
+  document.getElementById("loading").style.display = "none";
+});
+
+
+  document.getElementById("historyBtn").addEventListener("click", showHistory);
+
+  
+  const themeToggleBtn = document.getElementById("themeToggleBtn");
+
+
+
+themeToggleBtn.addEventListener("click", () => {
+  const body = document.body;
+  if (body.classList.contains("dark-theme")) {
+    body.classList.remove("dark-theme");
+    body.classList.add("light-theme");
+    themeToggleBtn.textContent = "Switch to Dark Theme 🌙";
+  } else {
+    body.classList.remove("light-theme");
+    body.classList.add("dark-theme");
+    themeToggleBtn.textContent = "Switch to Light Theme ☀️";
+  }
+});
+document.body.classList.add("light-theme");
+
 </script>
 
 </body>

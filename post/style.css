@@ -69,3 +69,97 @@ button:hover {
   margin-top: 10px;
 }
 
+#clearBtn {
+  margin-top: 1rem;
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  background-color: #ff4444;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+#clearBtn:hover {
+  background-color: #cc0000;
+}
+
+
+#historyBtn {
+  margin-top: 1rem;
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  background-color: #ffa000;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+#historyBtn:hover {
+  background-color: #ff6f00;
+}
+
+.history {
+  margin-top: 20px;
+  background-color: rgba(255, 255, 255, 0.08);
+  padding: 1rem;
+  border-radius: 10px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.history-item {
+  margin-bottom: 1rem;
+}
+
+.history-content {
+  margin-top: 5px;
+}
+
+
+body.light-theme {
+  background: linear-gradient(to right, #4facfe, #00f2fe);
+  color: #000;
+}
+
+body.light-theme .container {
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #000;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+}
+
+body.light-theme button {
+  background-color: #00c6ff;
+  color: white;
+}
+
+body.light-theme button:hover {
+  background-color: #0072ff;
+}
+
+/* Dark Theme */
+body.dark-theme {
+  background: #121212;
+  color: #fff;
+}
+
+body.dark-theme .container {
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  box-shadow: 0 8px 30px rgba(255, 255, 255, 0.1);
+}
+
+body.dark-theme button {
+  background-color: #444;
+  color: #fff;
+}
+
+body.dark-theme button:hover {
+  background-color: #222;
+}
+
