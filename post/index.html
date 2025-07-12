@@ -1,32 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Design Recommender</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Caption Generator</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
-    <h1>🎨 Design Recommender</h1>
-    <p>Get layout, font, and color ideas in seconds!</p>
-
-    <label>Describe your design:</label>
-    <input type="text" id="designInput" placeholder="e.g. Diwali greeting for bakery">
-
-    <button onclick="generateDesign()">Generate Suggestions</button>
-
-    <div id="results">
-      <h3>🧱 Layout:</h3>
-      <p id="layoutOutput">...</p>
-
-      <h3>🅰️ Font Pairing:</h3>
-      <p id="fontOutput">...</p>
-
-      <h3>🎨 Color Palette:</h3>
-      <p id="colorOutput">...</p>
-
-      <button onclick="copyDesign()">📋 Copy All</button>
-    </div>
+    <h1>✨ AI Post Generator</h1>
+    <textarea id="userInput" placeholder="Write your idea for the post..."></textarea>
+    <button onclick="generatePost()">Generate 🔥</button>
+    <div class="loading" id="loading">⏳ Generating with AI...</div>
+    <div class="output" id="output"></div>
   </div>
 
   <script src="script.js"></script>
