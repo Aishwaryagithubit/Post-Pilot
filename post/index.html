@@ -41,6 +41,9 @@
           <button id="clearBtn">Reset</button>
           <div class="loading" id="loading">⏳ Generating with AI...</div>
           <div class="output" id="output"></div>
+
+          <button id="micBtn">🎙️ Speak</button>
+
         </div>
       </section>
 
@@ -110,6 +113,11 @@
         loading.style.display = "none";
         output.innerHTML = `❌ Error: ${err.message}`;
       }
+      const synth = window.speechSynthesis;
+      const utterance = new SpeechSynthesisUtterance(cleanHTML.replace(/<[^>]+>/g, ''));
+      utterance.lang = 'en-US';
+      synth.speak(utterance);
+
     }
 
     function formatResponse(text) {
@@ -233,6 +241,44 @@
       document.getElementById("loading").style.display = "none";
       document.getElementById("userInput").value = "";
     });
+
+    // Microphone button logic using Web Speech API
+const micBtn = document.getElementById("micBtn");
+const userInput = document.getElementById("userInput");
+
+// Check browser support
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+if (!SpeechRecognition) {
+  micBtn.disabled = true;
+  micBtn.textContent = "🎙️ Not supported";
+} else {
+  const recognition = new SpeechRecognition();
+  recognition.lang = "en-US";
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+
+  micBtn.addEventListener("click", () => {
+    micBtn.textContent = "🎤 Listening...";
+    recognition.start();
+  });
+
+  recognition.onresult = (event) => {
+    const transcript = event.results[0][0].transcript;
+    userInput.value = transcript;
+    micBtn.textContent = "🎙️ Speak";
+    generatePost(); // Automatically generate after recognition
+  };
+
+  recognition.onerror = (event) => {
+    alert("Voice error: " + event.error);
+    micBtn.textContent = "🎙️ Speak";
+  };
+
+  recognition.onend = () => {
+    micBtn.textContent = "🎙️ Speak";
+  };
+}
+
 
     // LOGIN INPUTS THEME CYCLE (7 themes)
     const loginSection = document.getElementById("loginScreen");
