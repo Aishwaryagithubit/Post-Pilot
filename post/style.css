@@ -1,165 +1,520 @@
-body {
-  font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(to right, #4facfe, #00f2fe);
-  color: #fff;
+/* RESET */
+* {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  transition: background 0.4s ease, color 0.4s ease;
+  overflow-x: hidden;
+}
+
+/* LOGIN STYLES */
+.login-section {
+  height: 100vh;
+  background: linear-gradient(135deg, #4b0082, #7b4bff, #ff66cc, #1e90ff);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
 }
 
-.container {
-  background-color: rgba(0, 0, 0, 0.7);
-  padding: 2rem;
-  border-radius: 20px;
-  width: 90%;
-  max-width: 500px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+@keyframes gradientShift {
+  0% {background-position: 0% 50%;}
+  50% {background-position: 100% 50%;}
+  100% {background-position: 0% 50%;}
 }
 
-h1 {
+.login-box {
+  background: rgba(30, 0, 60, 0.85);
+  padding: 3rem 2.5rem;
+  border-radius: 22px;
+  box-shadow: 0 8px 40px rgba(183, 110, 240, 0.8);
   text-align: center;
-  margin-bottom: 1rem;
+  color: #fff;
+  width: 90%;
+  max-width: 400px;
+  user-select: none;
 }
 
-textarea {
-  width: 100%;
-  height: 100px;
-  border: none;
-  border-radius: 10px;
-  padding: 10px;
-  font-size: 16px;
-  resize: none;
+.login-box h1 {
+  font-size: 3rem;
+  font-weight: 900;
+  margin-bottom: 0.2rem;
+  color: #fff;
+  text-shadow:
+    0 0 8px #ff66cc,
+    0 0 15px #b266ff;
 }
 
-button {
-  margin-top: 1rem;
-  width: 100%;
-  padding: 12px;
-  font-size: 16px;
-  background-color: #00c6ff;
+.login-box h1 .brand {
+  font-weight: 900;
   color: white;
+}
+
+.login-box h2 {
+  font-weight: 600;
+  margin-bottom: 2.2rem;
+  font-size: 1.3rem;
+  color: #dcd6f7cc;
+  text-shadow: 0 0 6px #7b4bff;
+}
+
+.login-box input {
+  width: 100%;
+  padding: 14px 18px;
+  margin-bottom: 1.2rem;
+  border-radius: 14px;
   border: none;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #311b92;
+  background: #d1c4e9cc;
+  box-shadow: inset 0 0 18px #7b4bff;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.login-box input::placeholder {
+  color: #9f7bff99;
+  font-style: italic;
+}
+
+.login-box input:focus {
+  outline: none;
+  background-color: #b39ddb;
+  box-shadow: inset 0 0 25px #7b4bff;
+  color: #3e2a84;
+}
+
+.login-box button {
+  width: 100%;
+  padding: 16px 0;
+  font-size: 1.2rem;
+  font-weight: 900;
+  border-radius: 18px;
+  border: none;
+  color: #fff;
+  background: linear-gradient(90deg, #8e2de2, #4a00e0, #ff0080, #ff5c8d);
+  background-size: 200% 200%;
+  box-shadow: 0 8px 30px rgba(255, 102, 178, 0.8);
+  cursor: pointer;
+  transition: background-position 0.4s ease, box-shadow 0.3s ease;
+  user-select: none;
+}
+
+.login-box button:hover {
+  background-position: 100% 0;
+  box-shadow: 0 10px 40px rgba(255, 102, 178, 1);
+}
+
+/* NAVBAR */
+.navbar {
+  background: rgba(20, 10, 50, 0.9);
+  padding: 0.6rem 1rem;
+  display: flex;
+  justify-content: flex-start;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+  user-select: none;
+  z-index: 100;
+}
+
+.nav-left {
+  display: flex;
+  gap: 1rem;
+}
+
+.nav-btn {
+  background: transparent;
+  border: none;
+  color: #bbb;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.4rem 1rem;
   border-radius: 10px;
   cursor: pointer;
-  transition: 0.3s ease;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.nav-btn:hover {
+  background: #7e57c2;
+  color: white;
+}
+
+.nav-btn.active {
+  background: #9575cd;
+  color: white;
+  box-shadow: 0 0 10px #9575cd;
+}
+
+/* MAIN APP LAYOUT */
+main {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.screen {
+  width: 100%;
+  max-width: 600px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* CONTAINER */
+.container {
+  background-color: rgba(33, 33, 33, 0.85);
+  padding: 2.5rem 3rem;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+  text-align: center;
+}
+
+h1, h2 {
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  margin-bottom: 1.5rem;
+  color: #d1c4e9;
+  text-shadow: 0 0 12px #7e57c2;
+}
+
+/* TEXTAREA */
+textarea#userInput {
+  width: 100%;
+  height: 120px;
+  padding: 14px 18px;
+  font-size: 1.1rem;
+  border-radius: 12px;
+  border: none;
+  resize: none;
+  background-color: #1a237e;
+  color: #eee;
+  box-shadow: inset 0 0 12px #311b92;
+}
+
+textarea#userInput::placeholder {
+  color: #b39ddb;
+  font-style: italic;
+}
+
+textarea#userInput:focus {
+  outline: none;
+  background-color: #311b92;
+  box-shadow: inset 0 0 20px #7e57c2;
+  color: #fff;
+}
+
+/* BUTTONS */
+button {
+  margin-top: 1.3rem;
+  padding: 14px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  width: 100%;
+  color: #fff;
+  background: linear-gradient(90deg, #7e57c2, #311b92);
+  box-shadow: 0 4px 18px rgba(126, 87, 194, 0.7);
 }
 
 button:hover {
-  background-color: #0072ff;
+  background: linear-gradient(90deg, #311b92, #7e57c2);
+  box-shadow: 0 6px 25px rgba(97, 70, 160, 0.9);
 }
 
+.btn-primary {
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+/* OUTPUT */
 .output {
-  margin-top: 20px;
+  margin-top: 1.8rem;
+  background-color: #311b92;
+  color: #ddd;
+  padding: 20px;
+  border-radius: 14px;
+  min-height: 130px;
+  font-size: 1rem;
+  line-height: 1.5;
+  overflow-wrap: break-word;
+  box-shadow: inset 0 0 20px #7e57c2;
+  white-space: pre-wrap;
 }
 
-.output p {
-  margin-bottom: 10px;
-  background-color: rgba(255,255,255,0.1);
-  padding: 10px;
-  border-radius: 10px;
-}
-
+/* LOADING */
 .loading {
+  margin-top: 1rem;
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: #b39ddb;
   display: none;
-  text-align: center;
-  font-weight: bold;
-  margin-top: 10px;
 }
 
-#clearBtn {
-  margin-top: 1rem;
-  width: 100%;
-  padding: 12px;
-  font-size: 16px;
-  background-color: #ff4444;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: 0.3s ease;
-}
-
-#clearBtn:hover {
-  background-color: #cc0000;
-}
-
-
-#historyBtn {
-  margin-top: 1rem;
-  width: 100%;
-  padding: 12px;
-  font-size: 16px;
-  background-color: #ffa000;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: 0.3s ease;
-}
-
-#historyBtn:hover {
-  background-color: #ff6f00;
-}
-
+/* HISTORY */
 .history {
-  margin-top: 20px;
-  background-color: rgba(255, 255, 255, 0.08);
-  padding: 1rem;
-  border-radius: 10px;
-  max-height: 300px;
+  background-color: #1a237e;
+  color: #b3b3b3;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  max-height: 400px;
   overflow-y: auto;
+  font-size: 0.9rem;
+  text-align: left;
+  box-shadow: inset 0 0 15px #311b92;
 }
 
 .history-item {
   margin-bottom: 1rem;
+  border-left: 4px solid #7e57c2;
+  padding-left: 0.9rem;
+}
+
+.history-item small {
+  display: block;
+  margin-bottom: 0.4rem;
+  color: #9575cd;
 }
 
 .history-content {
-  margin-top: 5px;
+  white-space: pre-wrap;
+  color: #d1c4e9;
 }
 
+/* SCROLLBAR */
+.history::-webkit-scrollbar {
+  width: 6px;
+}
+.history::-webkit-scrollbar-thumb {
+  background: #7e57c2;
+  border-radius: 10px;
+}
 
+/* THEME: LIGHT AND DARK */
 body.light-theme {
-  background: linear-gradient(to right, #4facfe, #00f2fe);
-  color: #000;
+  background: #f5f5f5;
+  color: #222;
 }
 
 body.light-theme .container {
-  background-color: rgba(255, 255, 255, 0.9);
-  color: #000;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  color: #222;
+  box-shadow: 0 8px 30px rgba(150, 150, 150, 0.3);
 }
 
-body.light-theme button {
-  background-color: #00c6ff;
-  color: white;
+body.light-theme textarea#userInput {
+  background-color: #fff;
+  color: #222;
+  box-shadow: inset 0 0 10px #aaa;
 }
 
-body.light-theme button:hover {
-  background-color: #0072ff;
+body.light-theme textarea#userInput::placeholder {
+  color: #888;
 }
 
-/* Dark Theme */
+body.light-theme .output {
+  background-color: #f0f0f0;
+  color: #222;
+  box-shadow: inset 0 0 15px #aaa;
+}
+
 body.dark-theme {
   background: #121212;
-  color: #fff;
+  color: #ddd;
 }
 
 body.dark-theme .container {
-  background-color: rgba(0, 0, 0, 0.8);
-  color: #fff;
-  box-shadow: 0 8px 30px rgba(255, 255, 255, 0.1);
+  background-color: #212121;
+  color: #ddd;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7);
 }
 
-body.dark-theme button {
-  background-color: #444;
-  color: #fff;
+body.dark-theme textarea#userInput {
+  background-color: #1a237e;
+  color: #eee;
+  box-shadow: inset 0 0 12px #311b92;
 }
 
-body.dark-theme button:hover {
-  background-color: #222;
+body.dark-theme textarea#userInput::placeholder {
+  color: #b39ddb;
 }
+
+body.dark-theme .output {
+  background-color: #311b92;
+  color: #ddd;
+  box-shadow: inset 0 0 20px #7e57c2;
+}
+
+/* THEME COLORS FOR LOGIN INPUTS PLACEHOLDER AND BACKGROUND */
+.login-theme-1 input::placeholder { color: #000000cc; }
+.login-theme-1 .login-box { background: rgba(255, 255, 255, 0.9); color: #000; }
+
+.login-theme-2 input::placeholder { color: #0d1b2a; }
+.login-theme-2 .login-box { background: #e0f7fa; color: #0d1b2a; }
+
+.login-theme-3 input::placeholder { color: #4a148c; }
+.login-theme-3 .login-box { background: #f3e5f5; color: #4a148c; }
+
+.login-theme-4 input::placeholder { color: #004d40; }
+.login-theme-4 .login-box { background: #e0f2f1; color: #004d40; }
+
+.login-theme-5 input::placeholder { color: #bf360c; }
+.login-theme-5 .login-box { background: #ffebee; color: #bf360c; }
+
+.login-theme-6 input::placeholder { color: #1a237e; }
+.login-theme-6 .login-box { background: #c5cae9; color: #1a237e; }
+
+.login-theme-7 input::placeholder { color: #311b92; }
+.login-theme-7 .login-box { background: #ede7f6; color: #311b92; }
+
+
+button:focus,
+input:focus {
+  outline-offset: 2px;
+}
+
+/* 7 Bold, Beautiful, Attractive Themes for app */
+
+/* Theme 1 - Electric Blue */
+body.theme-1 {
+  --bg-color: #0d1b2a;          /* very dark blue */
+  --text-color: #00cfff;        /* bright cyan */
+  --container-bg: #052f5fdd;    /* deep blue with some transparency */
+  --button-bg: #00aaff;          /* electric blue */
+  --button-hover-bg: #0088cc;    /* darker blue */
+}
+
+/* Theme 2 - Vibrant Purple */
+body.theme-2 {
+  --bg-color: #2e004f;          /* dark purple */
+  --text-color: #ff69b4;        /* hot pink */
+  --container-bg: #600080cc;    /* rich purple */
+  --button-bg: #d1007a;          /* magenta */
+  --button-hover-bg: #a00060;    /* deep magenta */
+}
+
+/* Theme 3 - Fiery Red */
+body.theme-3 {
+  --bg-color: #330000;          /* dark red */
+  --text-color: #ff4c4c;        /* vivid red */
+  --container-bg: #660000cc;    /* strong red */
+  --button-bg: #ff1a1a;          /* bright red */
+  --button-hover-bg: #cc0000;    /* deep red */
+}
+
+/* Theme 4 - Neon Green */
+body.theme-4 {
+  --bg-color: #002200;          /* very dark green */
+  --text-color: #7fff00;        /* neon green */
+  --container-bg: #004400cc;    /* deep green */
+  --button-bg: #66ff33;          /* bright green */
+  --button-hover-bg: #33cc00;    /* darker green */
+}
+
+/* Theme 5 - Royal Gold */
+body.theme-5 {
+  --bg-color: #332b00;          /* dark gold/brown */
+  --text-color: #ffcc00;        /* bright gold */
+  --container-bg: #665500cc;    /* golden brown */
+  --button-bg: #ffdd33;          /* vivid gold */
+  --button-hover-bg: #ccaa00;    /* deep gold */
+}
+
+/* Theme 6 - Deep Teal */
+body.theme-6 {
+  --bg-color: #003333;          /* dark teal */
+  --text-color: #00ffff;        /* cyan */
+  --container-bg: #006666cc;    /* strong teal */
+  --button-bg: #00cccc;          /* bright teal */
+  --button-hover-bg: #009999;    /* darker teal */
+}
+
+/* Theme 7 - Midnight Orange */
+body.theme-7 {
+  --bg-color: #331a00;          /* very dark orange/brown */
+  --text-color: #ff6600;        /* bright orange */
+  --container-bg: #663300cc;    /* rich burnt orange */
+  --button-bg: #ff8533;          /* vivid orange */
+  --button-hover-bg: #cc5500;    /* deep orange */
+}
+
+/* Apply theme colors */
+body.theme-1, body.theme-2, body.theme-3, body.theme-4, body.theme-5, body.theme-6, body.theme-7 {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+body.theme-1 .container, 
+body.theme-2 .container,
+body.theme-3 .container,
+body.theme-4 .container,
+body.theme-5 .container,
+body.theme-6 .container,
+body.theme-7 .container {
+  background-color: var(--container-bg);
+  color: var(--text-color);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+}
+
+body.theme-1 button, 
+body.theme-2 button,
+body.theme-3 button,
+body.theme-4 button,
+body.theme-5 button,
+body.theme-6 button,
+body.theme-7 button {
+  background-color: var(--button-bg);
+  color: white;
+  font-weight: 700;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 0 5px rgba(0,0,0,0.4);
+}
+
+body.theme-1 button:hover, 
+body.theme-2 button:hover,
+body.theme-3 button:hover,
+body.theme-4 button:hover,
+body.theme-5 button:hover,
+body.theme-6 button:hover,
+body.theme-7 button:hover {
+  background-color: var(--button-hover-bg);
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.8);
+}
+
+/* Textarea styles for themes */
+
+body.theme-1 textarea#userInput,
+body.theme-2 textarea#userInput,
+body.theme-3 textarea#userInput,
+body.theme-4 textarea#userInput,
+body.theme-5 textarea#userInput,
+body.theme-6 textarea#userInput,
+body.theme-7 textarea#userInput {
+  background-color: var(--container-bg);
+  color: var(--text-color);
+  font-weight: 600;
+  box-shadow: inset 0 0 15px var(--button-bg);
+  border: 1.5px solid var(--button-bg);
+}
+
+body.theme-1 textarea#userInput::placeholder,
+body.theme-2 textarea#userInput::placeholder,
+body.theme-3 textarea#userInput::placeholder,
+body.theme-4 textarea#userInput::placeholder,
+body.theme-5 textarea#userInput::placeholder,
+body.theme-6 textarea#userInput::placeholder,
+body.theme-7 textarea#userInput::placeholder {
+  color: var(--button-bg);
+  font-weight: 600;
+}
+
 
