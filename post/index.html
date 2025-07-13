@@ -69,6 +69,24 @@
     </main>
   </div>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
   <!-- SCRIPT SECTION -->
   <script type="module">
     import {
@@ -242,12 +260,11 @@
       document.getElementById("userInput").value = "";
     });
 
-    // Microphone button logic using Web Speech API
-const micBtn = document.getElementById("micBtn");
+  const micBtn = document.getElementById("micBtn");
 const userInput = document.getElementById("userInput");
 
-// Check browser support
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
 if (!SpeechRecognition) {
   micBtn.disabled = true;
   micBtn.textContent = "🎙️ Not supported";
@@ -257,27 +274,37 @@ if (!SpeechRecognition) {
   recognition.interimResults = false;
   recognition.maxAlternatives = 1;
 
+  let isListening = false; // track current state
+
   micBtn.addEventListener("click", () => {
-    micBtn.textContent = "🎤 Listening...";
-    recognition.start();
+    if (!isListening) {
+      recognition.start();
+      micBtn.textContent = "🔴 Stop Listening";
+      isListening = true;
+    } else {
+      recognition.stop();
+      micBtn.textContent = "🎙️ Speak";
+      isListening = false;
+    }
   });
 
   recognition.onresult = (event) => {
     const transcript = event.results[0][0].transcript;
     userInput.value = transcript;
-    micBtn.textContent = "🎙️ Speak";
-    generatePost(); // Automatically generate after recognition
+    generatePost(); // Generate after speaking
   };
 
   recognition.onerror = (event) => {
-    alert("Voice error: " + event.error);
-    micBtn.textContent = "🎙️ Speak";
+    alert("🎤 Error: " + event.error);
   };
 
   recognition.onend = () => {
     micBtn.textContent = "🎙️ Speak";
+    isListening = false;
   };
 }
+
+
 
 
     // LOGIN INPUTS THEME CYCLE (7 themes)
