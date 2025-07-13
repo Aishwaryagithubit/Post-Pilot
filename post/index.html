@@ -2,172 +2,297 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>AI Caption Generator</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="container">
-    <h1>✨ AI Post Generator</h1>
-    <textarea id="userInput" placeholder="Write your idea for the post..."></textarea>
+  <!-- LOGIN SCREEN -->
+  <section id="loginScreen" class="login-section">
+    <div class="login-box" title="Click here to switch login input theme">
+      <h1><span class="brand">Promptly</span></h1>
+      <h2>AI Caption Generator</h2>
+      <input type="text" id="username" placeholder="Enter your username" />
+      <input type="password" id="password" placeholder="Enter your password" />
+      <button id="loginBtn">Log In</button>
+      <p style="font-size:0.85rem; margin-top: 10px; color: #ccc; user-select:none;">
+        Click here to switch login input theme
+      </p>
+    </div>
+  </section>
 
-    
-    <button id="generateBtn">Generate 🔥</button>
-    <div class="loading" id="loading">⏳ Generating with AI...</div>
-    <div class="output" id="output"></div>
+  <!-- APP SCREEN (Hidden Initially) -->
+  <div id="app" class="hidden">
+    <nav class="navbar">
+      <div class="nav-left">
+        <button id="homeBtn" class="nav-btn active">Home</button>
+        <button id="historyBtn" class="nav-btn">History</button>
+        <button id="themeBtn" class="nav-btn">Theme</button>
+      </div>
+    </nav>
 
-    <button id="clearBtn">Reset</button>
+    <main>
+      <!-- Home -->
+      <section id="mainScreen" class="screen">
+        <div class="container">
+          <h1>✨ Welcome, <span id="displayUser"></span>!</h1>
+          <textarea id="userInput" placeholder="Write your idea for the post..."></textarea>
+          <button id="generateBtn">Generate 🔥</button>
+          <button id="clearBtn">Reset</button>
+          <div class="loading" id="loading">⏳ Generating with AI...</div>
+          <div class="output" id="output"></div>
+        </div>
+      </section>
 
-    <button id="themeToggleBtn">Switch to Dark Theme 🌙</button>
+      <!-- History -->
+      <section id="historyScreen" class="screen hidden">
+        <div class="container">
+          <h2>📜 History</h2>
+          <div id="historyContent" class="history"></div>
+        </div>
+      </section>
 
-    <button id="historyBtn">📜 View History</button>
-    <div class="history" id="history" style="display: none;"></div>
+      <!-- Theme -->
+      <section id="themeScreen" class="screen hidden">
+        <div class="container theme-container">
+          <h2>🎨 Select Theme</h2>
+          <!-- Old toggle kept for backward compatibility -->
+          <button id="toggleThemeBtn" class="btn-primary">Switch to Dark Theme 🌙</button>
+
+          <!-- New 7-theme cycle button -->
+          <button id="cycleThemeBtn" class="btn-primary" style="margin-top: 1rem;">Cycle 7 Beautiful Themes</button>
+        </div>
+      </section>
+    </main>
   </div>
 
-  <!-- <script src="script.js"></script> -->
-
-
+  <!-- SCRIPT SECTION -->
   <script type="module">
-  import {
-    GoogleGenerativeAI,
-    HarmCategory,
-    HarmBlockThreshold,
-  } from "https://cdn.jsdelivr.net/npm/@google/generative-ai@latest/+esm";
+    import {
+      GoogleGenerativeAI,
+    } from "https://cdn.jsdelivr.net/npm/@google/generative-ai@latest/+esm";
 
-  const API_KEY = "AIzaSyBQyHsAsXAjHITGh5-WEnpHXRTx0UinBSs"; 
-  const genAI = new GoogleGenerativeAI(API_KEY);
+    const API_KEY = "AIzaSyBQyHsAsXAjHITGh5-WEnpHXRTx0UinBSs";
+    const genAI = new GoogleGenerativeAI(API_KEY);
 
+    async function generatePost() {
+      const input = document.getElementById("userInput").value.trim();
+      const output = document.getElementById("output");
+      const loading = document.getElementById("loading");
 
-  async function typeWriter(text, element, delay = 40) {
-    element.innerHTML = "";
-    for (let i = 0; i < text.length; i++) {
-      element.innerHTML += text[i];
-      await new Promise((resolve) => setTimeout(resolve, delay));
+      if (!input) {
+        alert("Please enter your post idea.");
+        return;
+      }
+
+      output.innerHTML = "";
+      loading.style.display = "block";
+
+      try {
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const prompt = `Create two social media post options from this idea: "${input}"
+        Include the following:
+        - Caption
+        - Emojis
+        - Description
+        - Hashtags
+        Label them clearly as "Option 1" and "Option 2". Format clearly.`;
+
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        const responseText = await response.text();
+
+        const cleanHTML = formatResponse(responseText);
+        loading.style.display = "none";
+        output.innerHTML = cleanHTML;
+        saveToHistory(cleanHTML);
+      } catch (err) {
+        loading.style.display = "none";
+        output.innerHTML = `❌ Error: ${err.message}`;
+      }
     }
-  }
-  
 
-  async function generatePost() {
-    const input = document.getElementById("userInput").value.trim();
-    const output = document.getElementById("output");
-
-    if (!input) {
-      alert("Please enter your post idea.");
-      return;
-    }
-
-    output.innerHTML = "✨ Generating your AI-powered post...";
-
-    try {
-      const model = genAI.getGenerativeModel({
-        model: "gemini-1.5-flash",
+    function formatResponse(text) {
+      const lines = text.split(/\n+/);
+      let html = "";
+      lines.forEach((line) => {
+        const trimmed = line.trim();
+        if (/^alternative.*post/i.test(trimmed)) {
+          html += `<br><hr><h3>🔁 <strong>Alternative Post:</strong></h3><br>`;
+        } else if (/^image:/i.test(trimmed)) {
+          html += `🖼️ <strong>Image:</strong> ${trimmed.replace(/image:/i, "").trim()}<br><br>`;
+        } else if (/^caption:/i.test(trimmed)) {
+          html += `📝 <strong>Caption:</strong> ${trimmed.replace(/caption:/i, "").trim()}<br><br>`;
+        } else if (/^description:/i.test(trimmed)) {
+          html += `📖 <strong>Description:</strong> ${trimmed.replace(/description:/i, "").trim()}<br><br>`;
+        } else if (/^hashtags:/i.test(trimmed)) {
+          html += `🏷️ <strong>Hashtags:</strong> ${trimmed.replace(/hashtags:/i, "").trim()}<br><br>`;
+        } else if (trimmed.length > 0) {
+          html += `${trimmed}<br><br>`;
+        }
       });
-
-      const prompt = `Create two social media post options from this idea: "${input}"
-      Include the following:
-      - Caption
-      - Emojis
-      - Description
-      - Hashtags
-       Label them clearly as "Option 1" and "Option 2". Format clearly.`;
-
-      const result = await model.generateContent(prompt);
-      const response = await result.response;
-      const responseText = await response.text();
-
-      const cleanHTML = formatResponse(responseText);
-      output.innerHTML = cleanHTML;
-      saveToHistory(cleanHTML);
-
-
-    } catch (err) {
-      console.error("Error:", err);
-      output.innerHTML = `❌ Error: ${err.message}`;
+      return html;
     }
-  }
-   function formatResponse(text) {
-  const lines = text.split(/\n+/); // split by new lines
-  let html = "";
-  let insideAlt = false;
-
-  lines.forEach(line => {
-    const trimmed = line.trim();
-
-    if (/^alternative.*post/i.test(trimmed)) {
-      html += `<br><hr><h3>🔁 <strong>Alternative Post:</strong></h3><br>`;
-      insideAlt = true;
-    } else if (/^image:/i.test(trimmed)) {
-      html += `🖼️ <strong>Image:</strong> ${trimmed.replace(/image:/i, "").trim()}<br><br>`;
-    } else if (/^caption:/i.test(trimmed)) {
-      html += `📝 <strong>Caption:</strong> ${trimmed.replace(/caption:/i, "").trim()}<br><br>`;
-    } else if (/^description:/i.test(trimmed)) {
-      html += `📖 <strong>Description:</strong> ${trimmed.replace(/description:/i, "").trim()}<br><br>`;
-    } else if (/^hashtags:/i.test(trimmed)) {
-      html += `🏷️ <strong>Hashtags:</strong> ${trimmed.replace(/hashtags:/i, "").trim()}<br><br>`;
-    } else if (trimmed.length > 0) {
-      html += `${trimmed}<br><br>`; // fallback for untagged lines
-    }
-  });
-
-  return html;
-}
 
     function saveToHistory(content) {
-  const history = JSON.parse(localStorage.getItem("postHistory")) || [];
-  history.unshift({ content, timestamp: new Date().toLocaleString() });
-  localStorage.setItem("postHistory", JSON.stringify(history.slice(0, 15)));
-}
+      const history = JSON.parse(localStorage.getItem("postHistory")) || [];
+      history.unshift({ content, timestamp: new Date().toLocaleString() });
+      localStorage.setItem("postHistory", JSON.stringify(history.slice(0, 15)));
+    }
 
-function showHistory() {
-  const historyContainer = document.getElementById("history");
-  const historyData = JSON.parse(localStorage.getItem("postHistory")) || [];
+    function loadHistory() {
+      const historyData = JSON.parse(localStorage.getItem("postHistory")) || [];
+      const container = document.getElementById("historyContent");
 
-  if (historyData.length === 0) {
-    historyContainer.innerHTML = "<p>No history yet.</p>";
-  } else {
-    historyContainer.innerHTML = historyData.map(entry => `
-      <div class="history-item">
-        <small>🕓 ${entry.timestamp}</small>
-        <div class="history-content">${entry.content}</div>
-        <hr>
-      </div>
-    `).join("");
-  }
+      container.innerHTML = historyData.length === 0
+        ? "<p>No history yet.</p>"
+        : historyData.map(entry => `
+          <div class="history-item">
+            <small>🕓 ${entry.timestamp}</small>
+            <div class="history-content">${entry.content}</div>
+            <hr />
+          </div>
+        `).join("");
+    }
 
-  historyContainer.style.display = historyContainer.style.display === "none" ? "block" : "none";
-}
+    // LOGIN LOGIC
+    document.getElementById("loginBtn").addEventListener("click", () => {
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      if (!username || !password) {
+        alert("Please enter username and password.");
+        return;
+      }
+
+      document.getElementById("displayUser").textContent = username;
+      document.getElementById("loginScreen").classList.add("hidden");
+      document.getElementById("app").classList.remove("hidden");
+    });
+
+    // THEME SWITCH FOR APP (light/dark) - old toggle
+    const toggleThemeBtn = document.getElementById("toggleThemeBtn");
+
+    function updateThemeToggleText() {
+      toggleThemeBtn.textContent = document.body.classList.contains("dark-theme")
+        ? "Switch to Light Theme ☀️"
+        : "Switch to Dark Theme 🌙";
+    }
+
+    toggleThemeBtn.addEventListener("click", () => {
+      document.body.classList.toggle("dark-theme");
+      document.body.classList.toggle("light-theme");
+      updateThemeToggleText();
+    });
+
+    // NAVIGATION
+    const mainScreen = document.getElementById("mainScreen");
+    const historyScreen = document.getElementById("historyScreen");
+    const themeScreen = document.getElementById("themeScreen");
+
+    const homeBtn = document.getElementById("homeBtn");
+    const historyBtn = document.getElementById("historyBtn");
+    const themeBtn = document.getElementById("themeBtn");
+
+    function setActiveNav(btn) {
+      [homeBtn, historyBtn, themeBtn].forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+    }
+
+    homeBtn.addEventListener("click", () => {
+      mainScreen.classList.remove("hidden");
+      historyScreen.classList.add("hidden");
+      themeScreen.classList.add("hidden");
+      setActiveNav(homeBtn);
+    });
+
+    historyBtn.addEventListener("click", () => {
+      mainScreen.classList.add("hidden");
+      historyScreen.classList.remove("hidden");
+      themeScreen.classList.add("hidden");
+      loadHistory();
+      setActiveNav(historyBtn);
+    });
+
+    themeBtn.addEventListener("click", () => {
+      mainScreen.classList.add("hidden");
+      historyScreen.classList.add("hidden");
+      themeScreen.classList.remove("hidden");
+      updateThemeToggleText();
+      setActiveNav(themeBtn);
+    });
+
+    // INIT
+    document.body.classList.add("light-theme");
+    setActiveNav(homeBtn);
+
+    // Buttons
+    document.getElementById("generateBtn").addEventListener("click", generatePost);
+    document.getElementById("clearBtn").addEventListener("click", () => {
+      document.getElementById("output").innerHTML = "";
+      document.getElementById("loading").style.display = "none";
+      document.getElementById("userInput").value = "";
+    });
+
+    // LOGIN INPUTS THEME CYCLE (7 themes)
+    const loginSection = document.getElementById("loginScreen");
+    const loginBox = loginSection.querySelector(".login-box");
+
+    let currentLoginTheme = 1;
+    const maxLoginThemes = 7;
+
+    loginBox.style.cursor = "pointer";
+
+    loginBox.addEventListener("click", () => {
+      loginSection.classList.remove(`login-theme-${currentLoginTheme}`);
+
+      currentLoginTheme = currentLoginTheme === maxLoginThemes ? 1 : currentLoginTheme + 1;
+
+      loginSection.classList.add(`login-theme-${currentLoginTheme}`);
+    });
 
 
-  document.getElementById("generateBtn")?.addEventListener("click", generatePost);
+    // NEW: APP 7 THEME CYCLE FEATURE
 
-  document.getElementById("clearBtn").addEventListener("click", () => {
-  document.getElementById("output").innerHTML = "";
-  document.getElementById("loading").style.display = "none";
-});
+    const cycleThemeBtn = document.getElementById("cycleThemeBtn");
 
+    const appThemes = [
+      "theme-1",
+      "theme-2",
+      "theme-3",
+      "theme-4",
+      "theme-5",
+      "theme-6",
+      "theme-7"
+    ];
 
-  document.getElementById("historyBtn").addEventListener("click", showHistory);
+    let currentAppThemeIndex = 0;
 
-  
-  const themeToggleBtn = document.getElementById("themeToggleBtn");
+    function applyAppTheme(index) {
+      // Remove all theme classes first
+      appThemes.forEach(theme => document.body.classList.remove(theme));
 
+      // Also remove light and dark so they don't conflict
+      document.body.classList.remove("light-theme");
+      document.body.classList.remove("dark-theme");
 
+      // Add selected theme
+      document.body.classList.add(appThemes[index]);
+    }
 
-themeToggleBtn.addEventListener("click", () => {
-  const body = document.body;
-  if (body.classList.contains("dark-theme")) {
-    body.classList.remove("dark-theme");
-    body.classList.add("light-theme");
-    themeToggleBtn.textContent = "Switch to Dark Theme 🌙";
-  } else {
-    body.classList.remove("light-theme");
-    body.classList.add("dark-theme");
-    themeToggleBtn.textContent = "Switch to Light Theme ☀️";
-  }
-});
-document.body.classList.add("light-theme");
+    function updateCycleThemeBtnText() {
+      const themeName = appThemes[currentAppThemeIndex].replace("-", " ").toUpperCase();
+      cycleThemeBtn.textContent = `Cycle 7 Beautiful Themes: ${themeName}`;
+    }
 
-</script>
+    cycleThemeBtn.addEventListener("click", () => {
+      currentAppThemeIndex = (currentAppThemeIndex + 1) % appThemes.length;
+      applyAppTheme(currentAppThemeIndex);
+      updateCycleThemeBtnText();
+    });
 
+    // Initialize the cycle theme button text
+    updateCycleThemeBtnText();
+  </script>
 </body>
 </html>
