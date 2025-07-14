@@ -8,7 +8,7 @@
 </head>
 <body>
   <!-- LOGIN SCREEN -->
-  <section id="loginScreen" class="login-section">
+  <!-- <section id="loginScreen" class="login-section">
     <div class="login-box" title="Click here to switch login input theme">
       <h1><span class="brand">Promptly</span></h1>
       <h2>AI Caption Generator</h2>
@@ -19,10 +19,10 @@
         Click here to switch login input theme
       </p>
     </div>
-  </section>
+  </section> -->
 
   <!-- APP SCREEN (Hidden Initially) -->
-  <div id="app" class="hidden">
+  <div id="app">
     <nav class="navbar">
       <div class="nav-left">
         <button id="homeBtn" class="nav-btn active">Home</button>
@@ -37,6 +37,15 @@
         <div class="container">
           <h1>✨ Welcome, <span id="displayUser"></span>!</h1>
           <textarea id="userInput" placeholder="Write your idea for the post..."></textarea>
+
+            <div id="optionSelector" style="margin-bottom: 1rem;">
+            <label style="margin-right: 10px;">How many options?</label>
+            <button id="decreaseBtn">➖</button>
+            <span id="optionCountDisplay" style="margin: 0 10px; font-weight: bold;">2</span>
+            <button id="increaseBtn">➕</button>
+          </div>
+
+
           <button id="generateBtn">Generate 🔥</button>
           <button id="clearBtn">Reset</button>
           <div class="loading" id="loading">⏳ Generating with AI...</div>
@@ -66,6 +75,7 @@
           <button id="cycleThemeBtn" class="btn-primary" style="margin-top: 1rem;">Cycle 7 Beautiful Themes</button>
         </div>
       </section>
+      
     </main>
   </div>
 
@@ -96,6 +106,27 @@
     const API_KEY = "AIzaSyBQyHsAsXAjHITGh5-WEnpHXRTx0UinBSs";
     const genAI = new GoogleGenerativeAI(API_KEY);
 
+    let optionCount = 2;
+    const optionDisplay = document.getElementById("optionCountDisplay");
+    const maxOptions = 5;
+    const minOptions = 1;
+
+    document.getElementById("increaseBtn").addEventListener("click", () => {
+      if (optionCount < maxOptions) {
+        optionCount++;
+        optionDisplay.textContent = optionCount;
+      }
+    });
+
+    document.getElementById("decreaseBtn").addEventListener("click", () => {
+      if (optionCount > minOptions) {
+        optionCount--;
+        optionDisplay.textContent = optionCount;
+      }
+    });
+
+
+
     async function generatePost() {
       const input = document.getElementById("userInput").value.trim();
       const output = document.getElementById("output");
@@ -111,13 +142,14 @@
 
       try {
         const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-        const prompt = `Create two social media post options from this idea: "${input}"
+        const prompt = `Create ${optionCount} social media post options from this idea: "${input}";
+
         Include the following:
         - Caption
         - Emojis
         - Description
         - Hashtags
-        Label them clearly as "Option 1" and "Option 2". Format clearly.`;
+        Label each clearly as "Option 1", "Option 2", ..., up to "Option ${optionCount}". Format clearly.`;
 
         const result = await model.generateContent(prompt);
         const response = await result.response;
@@ -182,20 +214,20 @@
     }
 
     // LOGIN LOGIC
-    document.getElementById("loginBtn").addEventListener("click", () => {
-      const username = document.getElementById("username").value.trim();
-      const password = document.getElementById("password").value.trim();
+    // document.getElementById("loginBtn").addEventListener("click", () => {
+    //   const username = document.getElementById("username").value.trim();
+    //   const password = document.getElementById("password").value.trim();
 
-      if (!username || !password) {
-        alert("Please enter username and password.");
-        return;
-      }
+    //   if (!username || !password) {
+    //     alert("Please enter username and password.");
+    //     return;
+    //   }
 
-      document.getElementById("displayUser").textContent = username;
-      document.getElementById("loginScreen").classList.add("hidden");
-      document.getElementById("app").classList.remove("hidden");
-    });
-
+    //   document.getElementById("displayUser").textContent = username;
+    //   document.getElementById("loginScreen").classList.add("hidden");
+    //   document.getElementById("app").classList.remove("hidden");
+    // });
+    document.getElementById("displayUser").textContent = "Guest";
     // THEME SWITCH FOR APP (light/dark) - old toggle
     const toggleThemeBtn = document.getElementById("toggleThemeBtn");
 
@@ -308,21 +340,21 @@ if (!SpeechRecognition) {
 
 
     // LOGIN INPUTS THEME CYCLE (7 themes)
-    const loginSection = document.getElementById("loginScreen");
-    const loginBox = loginSection.querySelector(".login-box");
+    // const loginSection = document.getElementById("loginScreen");
+    // const loginBox = loginSection.querySelector(".login-box");
 
-    let currentLoginTheme = 1;
-    const maxLoginThemes = 7;
+    // let currentLoginTheme = 1;
+    // const maxLoginThemes = 7;
 
-    loginBox.style.cursor = "pointer";
+    // loginBox.style.cursor = "pointer";
 
-    loginBox.addEventListener("click", () => {
-      loginSection.classList.remove(`login-theme-${currentLoginTheme}`);
+    // loginBox.addEventListener("click", () => {
+    //   loginSection.classList.remove(`login-theme-${currentLoginTheme}`);
 
-      currentLoginTheme = currentLoginTheme === maxLoginThemes ? 1 : currentLoginTheme + 1;
+    //   currentLoginTheme = currentLoginTheme === maxLoginThemes ? 1 : currentLoginTheme + 1;
 
-      loginSection.classList.add(`login-theme-${currentLoginTheme}`);
-    });
+    //   loginSection.classList.add(`login-theme-${currentLoginTheme}`);
+    // });
 
 
     // NEW: APP 7 THEME CYCLE FEATURE

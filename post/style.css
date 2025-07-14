@@ -517,4 +517,53 @@ body.theme-7 textarea#userInput::placeholder {
   font-weight: 600;
 }
 
+#optionSelector {
+  display: flex;
+  align-items: center;       /* Vertically center buttons and label */
+  justify-content: center;   /* Center horizontally */
+  gap: 0.5rem;               /* Space between elements */
+  margin-bottom: 1rem;
+  user-select: none;
+  flex-wrap: nowrap;         /* prevent wrapping */
+}
+
+#optionSelector label {
+  color: #e0b3ff;
+  font-weight: 600;
+  font-size: 1rem;
+  white-space: nowrap;
+  margin-right: 0.6rem;      /* small spacing after label */
+  flex-shrink: 0;            /* prevent shrinking */
+}
+
+#optionSelector button {
+  width: 36px;
+  height: 36px;
+  font-size: 1.6rem;         /* slightly bigger for better visibility */
+  background: linear-gradient(135deg, #7e57c2, #9575cd);
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(149, 117, 205, 0.7);
+  transition: background-color 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;                /* remove default padding */
+}
+
+#optionSelector button:hover {
+  background: linear-gradient(135deg, #9575cd, #b39ddb);
+}
+
+#optionCountDisplay {
+  min-width: 28px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: #f4d1ff;
+  user-select: none;
+  flex-shrink: 0;            /* prevent shrinking */
+}
 
