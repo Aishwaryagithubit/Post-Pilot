@@ -45,7 +45,6 @@
             <button id="increaseBtn">➕</button>
           </div>
 
-
           <button id="generateBtn">Generate 🔥</button>
           <button id="clearBtn">Reset</button>
           <div class="loading" id="loading">⏳ Generating with AI...</div>
@@ -79,24 +78,6 @@
     </main>
   </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
   <!-- SCRIPT SECTION -->
   <script type="module">
     import {
@@ -124,8 +105,6 @@
         optionDisplay.textContent = optionCount;
       }
     });
-
-
 
     async function generatePost() {
       const input = document.getElementById("userInput").value.trim();
@@ -159,10 +138,24 @@
         loading.style.display = "none";
         output.innerHTML = cleanHTML;
         saveToHistory(cleanHTML);
+
+        // Automatic scroll down to see the generated options
+        output.scrollTop = output.scrollHeight;  // <-- Added automatic scroll down here
+
+        // Add Best Suggestion feature with random pick
+        let bestSuggestionHTML = "";
+        if (optionCount > 1) {
+          const bestOptionNumber = Math.floor(Math.random() * optionCount) + 1;
+          bestSuggestionHTML = `<hr><h3>🌟 Best Suggestion:</h3><p>Option ${bestOptionNumber} is recommended by AI as the best pick! Feel free to choose the others too.</p>`;
+          output.innerHTML += bestSuggestionHTML;
+          output.scrollTop = output.scrollHeight; // Scroll again to bottom after adding suggestion
+        }
+
       } catch (err) {
         loading.style.display = "none";
         output.innerHTML = `❌ Error: ${err.message}`;
       }
+
       const synth = window.speechSynthesis;
       const utterance = new SpeechSynthesisUtterance(cleanHTML.replace(/<[^>]+>/g, ''));
       utterance.lang = 'en-US';
@@ -228,6 +221,7 @@
     //   document.getElementById("app").classList.remove("hidden");
     // });
     document.getElementById("displayUser").textContent = "Guest";
+
     // THEME SWITCH FOR APP (light/dark) - old toggle
     const toggleThemeBtn = document.getElementById("toggleThemeBtn");
 
@@ -292,70 +286,49 @@
       document.getElementById("userInput").value = "";
     });
 
-  const micBtn = document.getElementById("micBtn");
-const userInput = document.getElementById("userInput");
+    const micBtn = document.getElementById("micBtn");
+    const userInput = document.getElementById("userInput");
 
-const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
-if (!SpeechRecognition) {
-  micBtn.disabled = true;
-  micBtn.textContent = "🎙️ Not supported";
-} else {
-  const recognition = new SpeechRecognition();
-  recognition.lang = "en-US";
-  recognition.interimResults = false;
-  recognition.maxAlternatives = 1;
-
-  let isListening = false; // track current state
-
-  micBtn.addEventListener("click", () => {
-    if (!isListening) {
-      recognition.start();
-      micBtn.textContent = "🔴 Stop Listening";
-      isListening = true;
+    if (!SpeechRecognition) {
+      micBtn.disabled = true;
+      micBtn.textContent = "🎙️ Not supported";
     } else {
-      recognition.stop();
-      micBtn.textContent = "🎙️ Speak";
-      isListening = false;
+      const recognition = new SpeechRecognition();
+      recognition.lang = "en-US";
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      let isListening = false; // track current state
+
+      micBtn.addEventListener("click", () => {
+        if (!isListening) {
+          recognition.start();
+          micBtn.textContent = "🔴 Stop Listening";
+          isListening = true;
+        } else {
+          recognition.stop();
+          micBtn.textContent = "🎙️ Speak";
+          isListening = false;
+        }
+      });
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        userInput.value = transcript;
+        generatePost(); // Generate after speaking
+      };
+
+      recognition.onerror = (event) => {
+        alert("🎤 Error: " + event.error);
+      };
+
+      recognition.onend = () => {
+        micBtn.textContent = "🎙️ Speak";
+        isListening = false;
+      };
     }
-  });
-
-  recognition.onresult = (event) => {
-    const transcript = event.results[0][0].transcript;
-    userInput.value = transcript;
-    generatePost(); // Generate after speaking
-  };
-
-  recognition.onerror = (event) => {
-    alert("🎤 Error: " + event.error);
-  };
-
-  recognition.onend = () => {
-    micBtn.textContent = "🎙️ Speak";
-    isListening = false;
-  };
-}
-
-
-
-
-    // LOGIN INPUTS THEME CYCLE (7 themes)
-    // const loginSection = document.getElementById("loginScreen");
-    // const loginBox = loginSection.querySelector(".login-box");
-
-    // let currentLoginTheme = 1;
-    // const maxLoginThemes = 7;
-
-    // loginBox.style.cursor = "pointer";
-
-    // loginBox.addEventListener("click", () => {
-    //   loginSection.classList.remove(`login-theme-${currentLoginTheme}`);
-
-    //   currentLoginTheme = currentLoginTheme === maxLoginThemes ? 1 : currentLoginTheme + 1;
-
-    //   loginSection.classList.add(`login-theme-${currentLoginTheme}`);
-    // });
-
 
     // NEW: APP 7 THEME CYCLE FEATURE
 
