@@ -1,5 +1,6 @@
 # 🌟 Promptly – AI Caption Generator 
-<img width="1024" height="1024" alt="Image" src="https://github.com/user-attachments/assets/a02a59b2-332c-4339-8cd1-5d2b264fb037" />
+<img width="300" alt="Image" src="https://github.com/user-attachments/assets/a02a59b2-332c-4339-8cd1-5d2b264fb037" />
+
 Promptly is an AI-powered web application that helps users generate engaging social media captions, descriptions, emojis, and hashtags based on a given idea. Designed with a beautiful UI and multiple features like voice input, theme switching, history tracking, and best suggestion recommendations, Promptly is your creative companion for content creation.
 
 ## 🚀 Features
