@@ -45,7 +45,7 @@
             <button id="increaseBtn">➕</button>
           </div>
 
-          <button id="generateBtn">Generate 🔥</button>
+          <button id="generateBtn">Generate</button>
           <button id="clearBtn">Reset</button>
           <div class="loading" id="loading">⏳ Generating with AI...</div>
           <div class="output" id="output"></div>
@@ -67,8 +67,8 @@
       <section id="themeScreen" class="screen hidden">
         <div class="container theme-container">
           <h2>🎨 Select Theme</h2>
-          <!-- Old toggle kept for backward compatibility -->
-          <button id="toggleThemeBtn" class="btn-primary">Switch to Dark Theme 🌙</button>
+          <!-- Old toggle kept for backward compatibility
+          <button id="toggleThemeBtn" class="btn-primary">Switch to Dark Theme 🌙</button> -->
 
           <!-- New 7-theme cycle button -->
           <button id="cycleThemeBtn" class="btn-primary" style="margin-top: 1rem;">Cycle 7 Beautiful Themes</button>
@@ -106,7 +106,7 @@
       }
     });
 
-    async function generatePost() {
+    async function generatePost(retries = 3) {
       const input = document.getElementById("userInput").value.trim();
       const output = document.getElementById("output");
       const loading = document.getElementById("loading");
@@ -118,6 +118,7 @@
 
       output.innerHTML = "";
       loading.style.display = "block";
+      let cleanHTML = "";
 
       try {
         const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
@@ -127,6 +128,7 @@
         - Caption
         - Emojis
         - Description
+        
         - Hashtags
         Label each clearly as "Option 1", "Option 2", ..., up to "Option ${optionCount}". Format clearly.`;
 
@@ -155,6 +157,9 @@
         loading.style.display = "none";
         output.innerHTML = `❌ Error: ${err.message}`;
       }
+       if (retries > 0 && err.message.includes("503")) {
+      setTimeout(() => generatePost(retries - 1), 2000); // Retry after 2s
+    }
 
       const synth = window.speechSynthesis;
       const utterance = new SpeechSynthesisUtterance(cleanHTML.replace(/<[^>]+>/g, ''));
@@ -225,17 +230,17 @@
     // THEME SWITCH FOR APP (light/dark) - old toggle
     const toggleThemeBtn = document.getElementById("toggleThemeBtn");
 
-    function updateThemeToggleText() {
-      toggleThemeBtn.textContent = document.body.classList.contains("dark-theme")
-        ? "Switch to Light Theme ☀️"
-        : "Switch to Dark Theme 🌙";
-    }
+    // function updateThemeToggleText() {
+    //   toggleThemeBtn.textContent = document.body.classList.contains("dark-theme")
+    //     ? "Switch to Light Theme ☀️"
+    //     : "Switch to Dark Theme 🌙";
+    // }
 
-    toggleThemeBtn.addEventListener("click", () => {
-      document.body.classList.toggle("dark-theme");
-      document.body.classList.toggle("light-theme");
-      updateThemeToggleText();
-    });
+    // toggleThemeBtn.addEventListener("click", () => {
+    //   document.body.classList.toggle("dark-theme");
+    //   document.body.classList.toggle("light-theme");
+    //   updateThemeToggleText();
+    // });
 
     // NAVIGATION
     const mainScreen = document.getElementById("mainScreen");
@@ -317,7 +322,7 @@
       recognition.onresult = (event) => {
         const transcript = event.results[0][0].transcript;
         userInput.value = transcript;
-        generatePost(); // Generate after speaking
+        // generatePost(); // Generate after speaking
       };
 
       recognition.onerror = (event) => {
